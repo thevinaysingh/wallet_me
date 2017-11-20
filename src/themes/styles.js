@@ -27,7 +27,13 @@ export const labelStyles = {
   },
   linkLabelStyle: {
     color: Colors.placeholderTxtColor,
-    fontSize: 16,
+    fontSize: 17,
+    paddingHorizontal: 5,
+    textDecorationLine: 'underline',
+  },
+  linkLabelWhiteStyle: {
+    color: Colors.whiteIconColor,
+    fontSize: 18,
     paddingHorizontal: 5,
     textDecorationLine: 'underline',
   },

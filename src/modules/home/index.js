@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { containerStyles, dimensions, Colors } from '../../themes';
 import { Footer, Header, StatusBar } from '../../components';
-import { CategoryListItem } from './components';
+import { AccountListItem } from './components';
 import { local } from '../../constants';
 import withDrawer from '../../utils/withDrawer';
 
@@ -39,16 +39,26 @@ class Home extends Component {
     super();
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: ds.cloneWithRows(local.categoryList),
+      dataSource: ds.cloneWithRows(local.localAccountsList),
     };
   }
 
-  handleSubmit() {
+  handleAccountSelection = (account) => {
+    //Actions.categoryScreen({category: category});
+  }
+
+  onPopupEvent = (eventName, index) => {
+    // if (eventName !== 'itemSelected') return
+    // if (index === 0) this.onEdit()
+    // else this.onRemove()
+  }
+
+  onEdit() {
     // WIP
   }
 
-  handleCategorySelection = (category) => {
-    Actions.categoryScreen({category: category});
+  onRemove() {
+    // WIP
   }
 
   render() {
@@ -58,18 +68,17 @@ class Home extends Component {
         <Header
           title="Home"
           onPressleftIcon={() => this.props.toggleDrawer()}
-          showRightIcon={Boolean(true)}
           onPressRightIcon={() => { /* WIP */ }}
         />
         <View style={styles.content}>
-          <Text style={styles.listHeader}>All Categories</Text>
           <ListView
             dataSource={this.state.dataSource}
-            renderRow={(category) =>
-              <CategoryListItem
-                key={`${category.name}`}
-                onPressItem={(c) => this.handleCategorySelection(c) }
-                category={category} 
+            renderRow={(account) =>
+              <AccountListItem
+                key={`${account.app_name}`}
+                onPressItem={(acc) => this.handleAccountSelection(acc) }
+                onPopupEvent={this.onPopupEvent}
+                account={account} 
               />
             }
           />

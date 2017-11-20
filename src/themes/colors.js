@@ -1,8 +1,7 @@
 /* Actual colors */
 /* Start */
-const themeColor = '#730015';
-const themeColor2 = '#A1001D';
-const lightThemeColor = '#BA0022';
+const themeColor = '#004E88';
+// const lightThemeColor = '#BA0022';
 const black = '#000000';
 const sweetBlack = '#3C4959';
 // const lightBlack = '#4A4A4A';
@@ -14,8 +13,8 @@ const lightgrey = 'rgba(246,246,246,1)';
 
 /* Colors used in whole application */
 /* Start */
-export const statusBarColor = lightThemeColor;
-export const headerColor = themeColor2;
+export const statusBarColor = black;
+export const headerColor = themeColor;
 export const footerColor = lightgrey;
 export const defaultGreyColor = lightgrey;
 export const themeIconColor = themeColor;

@@ -34,5 +34,6 @@ module.exports = {
    "import/extensions": 0,
    "react/jsx-curly-brace-presence": 0,
    "no-underscore-dangle": 0,
+   "react/forbid-prop-types": 0,
  }
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon } from 'native-base';
+import Icon from 'react-native-vector-icons/Feather';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {
@@ -27,10 +27,6 @@ const styles = StyleSheet.create({
     fontFamily: 'entypo',
     flex: 1,
   },
-  badgeCountText: {
-    fontSize: 11,
-    color: Colors.whiteLabelColor,
-  },
   iconContainer: {
     paddingHorizontal: 10,
     height: 50,
@@ -38,7 +34,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   badgeIconContainer: {
-    width: 60,
+    width: 50,
     justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row',
@@ -47,20 +43,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     width: 20,
     height: 20,
-  },
-  menuIcon: {
-    color: Colors.whiteIconColor,
-    paddingHorizontal: 10,
-  },
-  badgeIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: 'red',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: -15,
-    marginBottom: 20,
   },
 });
 
@@ -71,44 +53,35 @@ const CustomHeader = props => (
       style={styles.iconContainer}
     >
       {props.showMenu ?
-        <Icon style={styles.menuIcon} active name="menu" />
+        <Icon name="menu" color={Colors.whiteIconColor} size={25} />
         : <Image style={styles.backIcon} source={Images.backWhite} />}
     </TouchableOpacity>
     <Text style={styles.headerTitleText} >{props.title}</Text>
-    {props.showRightIcon &&
-      <TouchableOpacity
-        onPress={props.onPressRightIcon}
-        style={styles.badgeIconContainer}
-      >
-        { props.showSearchIcon ?
-          <Icon style={styles.menuIcon} active name="search" />
-          : <Icon style={styles.menuIcon} active name="cart" />}
-        {!props.showSearchIcon && props.badgeCount > 0 &&
-          <View style={styles.badgeIcon}>
-            <Text style={styles.badgeCountText}>{props.badgeCount}</Text>
-          </View>}
-      </TouchableOpacity>}
+    <TouchableOpacity
+      onPress={props.onPressRightIcon}
+      style={styles.badgeIconContainer}
+    >
+      { props.showPlusIcon ?
+        <Icon name="plus" color={Colors.whiteIconColor} size={25} />
+        : <Icon name="check" color={Colors.whiteIconColor} size={25} />}
+    </TouchableOpacity>
   </View>
 );
 
 CustomHeader.propTypes = {
   title: PropTypes.string,
   showMenu: PropTypes.bool,
-  showRightIcon: PropTypes.bool,
-  showSearchIcon: PropTypes.bool,
+  showPlusIcon: PropTypes.bool,
   onPressleftIcon: PropTypes.func,
   onPressRightIcon: PropTypes.func,
-  badgeCount: PropTypes.number,
 };
 
 CustomHeader.defaultProps = {
   title: 'Title',
   showMenu: true,
-  showRightIcon: false,
-  showSearchIcon: true,
+  showPlusIcon: true,
   onPressleftIcon: _.noop,
   onPressRightIcon: _.noop,
-  badgeCount: 0,
 };
 
 export default CustomHeader;

@@ -3,14 +3,13 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Keyboard,
   Alert,
 } from 'react-native';
 import { Container, Content, Card, Item, Input, CardItem, Icon, Button, CheckBox } from 'native-base';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Colors, dimensions, containerStyles, labelStyles } from '../../../themes';
-import { Footer, Header, AppLogo, StatusBar } from '../../../components';
+import { AppLogo, StatusBar } from '../../../components';
 import { linkState, isEmailValid, isPasswordValid } from '../../../utils';
 import { errors } from '../../../constants';
 import withDrawer from '../../../utils/withDrawer';
@@ -22,36 +21,15 @@ class Login extends Component {
       email: '',
       password: '',
       showPassword: false,
-      isKeyboardOpen: false,
     };
-  }
-
-  componentWillMount() {
-    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
-    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
-  }
-
-  componentWillUnmount() {
-    this.keyboardDidShowListener.remove();
-    this.keyboardDidHideListener.remove();
-  }
-
-  keyboardDidShow = () => {
-    this.setState({ isKeyboardOpen: true });
-  }
-
-  keyboardDidHide = () => {
-    this.setState({ isKeyboardOpen: false });
   }
 
   handleSubmit() {
     const { email, password } = this.state;
     if (!isEmailValid(email)) {
       Alert.alert(errors.emailErrorText);
-      return;
     } else if (!isPasswordValid(password)) {
       Alert.alert(errors.passwordErrorText);
-      return;
     }
     // Call Api for login
   }
@@ -61,16 +39,9 @@ class Login extends Component {
   }
 
   render() {
-    const {
-      isKeyboardOpen,
-      email,
-      password,
-    } = this.state;
     return (
       <Container style={containerStyles.defaultContainer}>
         <StatusBar />
-        <Header title="Login" onPressleftIcon={() => this.props.toggleDrawer()}
-        />
         <Content contentContainerStyle={{ padding: dimensions.defaultDimension }}>
           <AppLogo />
           <Card style={{ padding: dimensions.defaultDimension }}>
@@ -80,7 +51,7 @@ class Login extends Component {
                 marginTop: -dimensions.smallDimension,
               }}
             >
-              <Icon style={{ color: Colors.themeIconColor }} active name="person" />
+              <Icon style={{ color: Colors.themeIconColor }} active name="mail" />
               <Input
                 getRef={(ref) => { this.emailInput = ref; }}
                 style={labelStyles.blackSmallLabel}
@@ -93,7 +64,7 @@ class Login extends Component {
               />
             </Item>
             <Item floatingLabel style={{ marginVertical: dimensions.smallDimension }}>
-              <Icon style={{ color: Colors.themeIconColor }} active name="key" />
+              <Icon style={{ color: Colors.themeIconColor }} active name="lock" />
               <Input
                 getRef={(ref) => { this.passwordInput = ref; }}
                 style={labelStyles.blackSmallLabel}
@@ -128,13 +99,12 @@ class Login extends Component {
             </Button>
           </Card>
           <View style={containerStyles.rowCenteredContainer}>
-            <Text style={labelStyles.blackMediumLabel}> {"Don't have an account?"} </Text>
+            <Text style={labelStyles.blackLargeLabel}> {"Don't have an account?"} </Text>
             <TouchableOpacity onPress={() => Actions.signupScreen()}>
               <Text style={labelStyles.linkLabelStyle}>Register</Text>
             </TouchableOpacity>
           </View>
         </Content>
-        {!isKeyboardOpen && <Footer />}
       </Container>
     );
   }

@@ -4,7 +4,7 @@ import { Colors } from '../themes';
 
 const CommonStatusBar = () => (
   <StatusBar
-    backgroundColor={Colors.labelColor}
+    backgroundColor={Colors.statusBarColor}
     barStyle="light-content"
   />
 );

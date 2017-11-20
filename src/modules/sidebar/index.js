@@ -21,30 +21,17 @@ const styles = StyleSheet.create({
     height: dimensions.getViewportHeight(),
   },
   headerContainer: {
-    height: 100,
+    height: 150,
     backgroundColor: Colors.defaultBgColor,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    paddingLeft: 10,
   },
   bodyStyle: {
     flex: 1,
     alignSelf: 'stretch',
     backgroundColor: Colors.sidebarBGColor,
     paddingBottom: 10,
-  },
-  menu: {
-    marginTop: 10,
-    paddingVertical: 3,
-    alignItems: 'center',
-    marginLeft: 20,
-    flexDirection: 'row',
-  },
-  menuText: {
-    paddingHorizontal: 20,
-    fontSize: 20,
-    fontWeight: '300',
-    color: 'white',
-    flex: 1,
   },
 });
 
@@ -54,11 +41,16 @@ export default class Sidebar extends Component {
     super(props);
 
     this.state = {
-      menus: sidebarMenus.unAuthenticatedMenuList,
+      menus: sidebarMenus.menusList,
     };
   }
 
   handleSubmit = (key, index) => {
+    if(index === 3) {
+      // logout
+      this.props.toggleDrawer();
+      return;
+    }    
     let menusList = this.state.menus.map((item, itemIndex) => {
       if (itemIndex === index) {
         item.active = true;
@@ -70,44 +62,17 @@ export default class Sidebar extends Component {
     this.setState({
       menus: menusList,
     });
-    this.props.toggleDrawer();
+    
     if(index === 0) {
       Actions.homeScreen();
       return;
     }
     if(index === 1) {
-      Actions.aboutUsScreen();
+      //Actions.myProfile();
       return;
     }
     if(index === 2) {
-      //Actions.homeScreen();
-      return;
-    }
-    if(index === 3) {
-      Actions.myCartScreen();
-      return;
-    }
-    if(index === 4) {
-      Actions.myOrderScreen();
-      return;
-    }
-    if(index === 5) {
-      Actions.myKiranaScreen();
-      return;
-    }
-    if(index === 7) {
-      this.props.toggleDrawer();
-      Actions.contactUsScreen();
-      return;
-    }
-    if(index === 8) {
-      this.props.toggleDrawer();
-      Actions.termsAndConditionsScreen();
-      return;
-    }
-    if(index === 9) {
-      this.props.toggleDrawer();
-      Actions.feedbackScreen();
+      //Actions.settings();
       return;
     }
   }
@@ -116,8 +81,8 @@ export default class Sidebar extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.headerContainer}>
-          <Text style={labelStyles.blackLargeLabel}>Not logged in as of Now.</Text>
-          <Text style={labelStyles.blackLargeLabel}>Login / Register</Text>
+          <Text style={labelStyles.blackMediumLabel}>Vinay Singh</Text>
+          <Text style={labelStyles.blackSmallLabel}>vinaysinghsatna01@gmail.com</Text>
         </View>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.bodyStyle}>
@@ -134,13 +99,6 @@ export default class Sidebar extends Component {
                 );
               })
             }
-            <MenuIconButton
-              key={'share'}
-              label={'Share'}
-              active={false}
-              icon={'share'}
-              onMenuIconPress={() => alert('share clicked')}
-            />
           </View>
         </ScrollView>
       </View>

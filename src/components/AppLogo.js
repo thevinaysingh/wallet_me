@@ -1,19 +1,14 @@
 import React from 'react';
 import { StyleSheet, Image } from 'react-native';
 import { Images } from 'src/assets';
-import { Colors } from '../themes';
 
 const styles = StyleSheet.create({
   logoIcon: {
-    width: 80,
-    height: 80,
-    backgroundColor: Colors.primaryBgColor,
+    width: 90,
+    height: 90,
     alignSelf: 'center',
     marginVertical: 20,
-  },
-  footerText: {
-    color: Colors.blackIconColor,
-    fontSize: 14,
+    borderRadius: 5,
   },
 });
 

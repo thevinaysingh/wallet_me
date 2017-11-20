@@ -49,9 +49,6 @@ class Signup extends Component {
       email: '',
       mob: '',
       password: '',
-      address: '',
-      landmark: '',
-      pincode: '',
       isKeyboardOpen: false,
     };
   }
@@ -109,17 +106,6 @@ class Signup extends Component {
     this[inputField]._root.focus();
   }
 
-  renderFooterOption = () => {
-    return (
-      <View
-        style={styles.keyBoardTextContainer}>
-        <Text onPress={this.handleBack} style={[styles.keyBoardText, { paddingLeft: 20 }]}>Back</Text>
-        <Text onPress={() => Keyboard.dismiss()} style={[styles.keyBoardText, { right: 100, position: 'absolute' }]}>Cancel</Text>
-        <Text onPress={this.handleSubmit} style={[styles.keyBoardText, { right: 20, position: 'absolute' }]}>Register</Text>
-      </View>
-    );
-  }
-
   render() {
     const {
       isKeyboardOpen,
@@ -127,9 +113,6 @@ class Signup extends Component {
       email,
       mob,
       password,
-      address,
-      landmark, 
-      pincode,
     } = this.state;
     return (
       <Container style={containerStyles.defaultContainer}>
@@ -141,7 +124,6 @@ class Signup extends Component {
         />
         <Content contentContainerStyle={{ padding: dimensions.defaultDimension }}>
           <Card style={{ padding: dimensions.defaultDimension }}>
-            <Text style={labelStyles.blackMediumLabel}>Personal Detail</Text>
             <Item
               style={{
                 marginBottom: dimensions.smallDimension,
@@ -173,7 +155,7 @@ class Signup extends Component {
               />
             </Item>
             <Item style={{ marginVertical: dimensions.smallDimension }}>
-              <Icon style={styles.iconStyle} active name='keypad' />
+              <Icon style={styles.iconStyle} active name='calculator' />
               <Input
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
@@ -198,44 +180,6 @@ class Signup extends Component {
                 {...linkState(this, 'password')}
               />
             </Item>
-            <Text style={[labelStyles.blackMediumLabel, { marginTop: 15 }]}>Current Location</Text>
-            <Item style={{ marginVertical: dimensions.smallDimension, alignItems: 'flex-start' }}>
-              <Icon style={{ color: Colors.themeIconColor, paddingTop: 10 }} active name='paper' />
-              <Input
-                style={[labelStyles.blackSmallLabel, { textAlignVertical: 'top'}]}
-                placeholderTextColor={Colors.placeholderTxtColor}
-                placeholder={'Address'}
-                multiline
-                numberOfLines={4}
-                getRef={(ref) => { this.addressInput = ref; }}
-                {...linkState(this, 'address')}
-              />
-            </Item>
-            <Item style={{ marginVertical: dimensions.smallDimension }}>
-              <Icon style={styles.iconStyle} active name='paw' />
-              <Input
-                style={labelStyles.blackSmallLabel}
-                placeholderTextColor={Colors.placeholderTxtColor}
-                placeholder={'Landmark (optional)'}
-                getRef={(ref) => { this.landmarkInput = ref; }}
-                returnKeyType="next"
-                onSubmitEditing={() => this.focusInput('pincodeInput')}
-                {...linkState(this, 'landmark')}
-              />
-            </Item>
-            <Item style={{ marginVertical: dimensions.smallDimension }}>
-              <Icon style={styles.iconStyle} active name='calculator' />
-              <Input
-                style={labelStyles.blackSmallLabel}
-                placeholderTextColor={Colors.placeholderTxtColor}
-                placeholder={'Pincode'}
-                keyboardType={'numeric'}
-                getRef={(ref) => { this.pincodeInput = ref; }}
-                returnKeyType="done"
-                onSubmitEditing={() => this.handleSubmit}
-                {...linkState(this, 'pincode')}
-              />
-            </Item>
             <Button
               onPress={() => this.handleSubmit()}
               full
@@ -245,16 +189,12 @@ class Signup extends Component {
             </Button>
           </Card>
           <View style={containerStyles.rowCenteredContainer}>
-            <Text style={labelStyles.blackMediumLabel}> {"Already have an account?"} </Text>
+            <Text style={labelStyles.blackLargeLabel}> {"Already have an account?"} </Text>
             <TouchableOpacity onPress={() => Actions.pop()}>
               <Text style={labelStyles.linkLabelStyle}>Login</Text>
             </TouchableOpacity>
           </View>
-        </Content>
-        {
-          isKeyboardOpen ? this.renderFooterOption() : <Footer />
-        }
-        
+        </Content>        
       </Container>
     );
   }
