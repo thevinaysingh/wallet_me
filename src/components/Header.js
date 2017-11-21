@@ -57,14 +57,13 @@ const CustomHeader = props => (
         : <Image style={styles.backIcon} source={Images.backWhite} />}
     </TouchableOpacity>
     <Text style={styles.headerTitleText} >{props.title}</Text>
+    {props.showPlusIcon &&
     <TouchableOpacity
       onPress={props.onPressRightIcon}
       style={styles.badgeIconContainer}
     >
-      { props.showPlusIcon ?
-        <Icon name="plus" color={Colors.whiteIconColor} size={25} />
-        : <Icon name="check" color={Colors.whiteIconColor} size={25} />}
-    </TouchableOpacity>
+      <Icon name="plus" color={Colors.whiteIconColor} size={25} />
+    </TouchableOpacity>}
   </View>
 );
 

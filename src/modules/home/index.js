@@ -9,15 +9,25 @@ import {
   Dimensions,
   ListView,
 } from 'react-native';
-import { Container, Content, List, ListItem } from 'native-base';
+import { Container, Content, List, ListItem, Card, Item, Input } from 'native-base';
+import Icon from 'react-native-vector-icons/Feather';
 import { Actions } from 'react-native-router-flux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { containerStyles, dimensions, Colors } from '../../themes';
+import { containerStyles, dimensions, Colors, labelStyles } from '../../themes';
 import { Footer, Header, StatusBar } from '../../components';
 import { AccountListItem } from './components';
 import { local } from '../../constants';
 import withDrawer from '../../utils/withDrawer';
+import {
+  linkState,
+  // isEmailValid,
+  // isPasswordValid,
+  // isDisplayNameValid,
+  // isAddressValid,
+  // isPincodeValid,
+  // isPhoneValid,
+} from '../../utils';
 
 const styles = StyleSheet.create({
   listHeader: {
@@ -32,6 +42,10 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     flex: 1,
   },
+  iconStyle: {
+    color: Colors.themeIconColor,
+    marginRight: 5,
+  },
 });
 
 class Home extends Component {
@@ -43,18 +57,13 @@ class Home extends Component {
     };
   }
 
-  handleAccountSelection = (account) => {
-    //Actions.categoryScreen({category: category});
-  }
-
-  onPopupEvent = (eventName, index) => {
-    // if (eventName !== 'itemSelected') return
-    // if (index === 0) this.onEdit()
-    // else this.onRemove()
-  }
-
-  onEdit() {
-    // WIP
+  onPopupEvent = (eventName, index, account) => {
+    if (eventName !== 'itemSelected') return
+    if (index === 0) {
+      Actions.accountForm({ create: false, account: account});
+    } else {
+      //this.onRemove()
+    }
   }
 
   onRemove() {
@@ -68,9 +77,25 @@ class Home extends Component {
         <Header
           title="Home"
           onPressleftIcon={() => this.props.toggleDrawer()}
-          onPressRightIcon={() => { /* WIP */ }}
+          onPressRightIcon={() =>
+            Actions.accountForm({ create: true, account: local.newAccountObject })}
         />
         <View style={styles.content}>
+          <Item
+            style={{
+              margin: dimensions.smallDimension,
+              borderWidth: 1,
+              borderColor: Colors.themeIconColor,
+            }}
+          >
+            <Icon style={styles.iconStyle} size={20} name='search' />
+            <Input
+              style={labelStyles.blackSmallLabel}
+              placeholderTextColor={Colors.placeholderTxtColor}
+              placeholder={'Search'}
+              returnKeyType={'done'}
+            />
+          </Item>
           <ListView
             dataSource={this.state.dataSource}
             renderRow={(account) =>

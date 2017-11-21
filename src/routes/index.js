@@ -8,6 +8,7 @@ import {
   LoginScreen,
   SignupScreen,
   HomeScreen,
+  AccountForm,
 } from '../modules';
 
 const Routes = () => (
@@ -16,6 +17,7 @@ const Routes = () => (
       <Scene key={'loginScreen'} component={LoginScreen} hideNavBar />
       <Scene key={'signupScreen'} component={SignupScreen} hideNavBar />
       <Scene key={'homeScreen'} component={HomeScreen} hideNavBar initial />
+      <Scene key={'accountForm'} component={AccountForm} hideNavBar />
     </Scene>
   </Router>
 );

@@ -20,22 +20,20 @@ const styles = StyleSheet.create({
 });
 
 const AccountListItem = props => (
-  <TouchableOpacity
-    activeOpacity={1}
-    onPress={() => props.onPressItem(props.account)}
-  >
-    <Card>
-      <CardItem style={{ alignItems: 'flex-start' }}>
-        <View style={styles.leftContainer}>
-          <Text style={labelStyles.blackLargeLabel}>{props.account.app_name}</Text>
-          <Text style={labelStyles.blackMediumLabel}>{props.account.web_url}</Text>
-          <Text style={labelStyles.blackMediumLabel}>{props.account.username}</Text>
-          <Text style={labelStyles.blackMediumLabel}>{props.account.password}</Text>
-        </View>
-        <PopupMenu actions={['Edit', 'Remove']} onPress={props.onPopupEvent} />
-      </CardItem>
-    </Card>
-  </TouchableOpacity>
+  <Card>
+    <CardItem style={{ alignItems: 'flex-start' }}>
+      <View style={styles.leftContainer}>
+        <Text style={labelStyles.blackLargeLabel}>{props.account.app_name}</Text>
+        <Text style={labelStyles.blackMediumLabel}>{props.account.web_url}</Text>
+        <Text style={labelStyles.blackMediumLabel}>{props.account.username}</Text>
+        <Text style={labelStyles.blackMediumLabel}>{props.account.password}</Text>
+      </View>
+      <PopupMenu
+        actions={['Edit', 'Remove']}
+        onPress={(eventName, index) => props.onPopupEvent(eventName, index, props.account)}
+      />
+    </CardItem>
+  </Card>
 );
 
 AccountListItem.propTypes = {
