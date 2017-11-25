@@ -120,7 +120,8 @@ class Signup extends Component {
         <Header
           title="Register"
           showMenu={false}
-          onPressleftIcon={() => Actions.loginScreen()}
+          showPlusIcon={false}
+          onPressleftIcon={() => Actions.pop()}
         />
         <Content contentContainerStyle={{ padding: dimensions.defaultDimension }}>
           <Card style={{ padding: dimensions.defaultDimension }}>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/Feather';
+import { Item } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import {
   StyleSheet,
@@ -21,17 +22,25 @@ const styles = StyleSheet.create({
     height: dimensions.getViewportHeight(),
   },
   headerContainer: {
-    height: 150,
+    minHeight: 100,
     backgroundColor: Colors.defaultBgColor,
     justifyContent: 'center',
+    padding: 10,
     alignItems: 'flex-start',
-    paddingLeft: 10,
   },
   bodyStyle: {
     flex: 1,
     alignSelf: 'stretch',
     backgroundColor: Colors.sidebarBGColor,
     paddingBottom: 10,
+  },
+  largeLabel: {
+    fontSize: 15,
+    color: Colors.primaryBgColor,
+  },
+  smallLabel: {
+    fontSize: 14,
+    color: Colors.placeholderTxtColor,
   },
 });
 
@@ -68,7 +77,7 @@ export default class Sidebar extends Component {
       return;
     }
     if(index === 1) {
-      //Actions.myProfile();
+      Actions.myProfile();
       return;
     }
     if(index === 2) {
@@ -77,12 +86,26 @@ export default class Sidebar extends Component {
     }
   }
 
+  renderUnauthenticatedView() {
+    return (
+      <View>
+        <Text style={styles.largeLabel}>Not logged in?</Text>
+        <Item>
+          <Text onPress={() => Actions.loginScreen()} style={styles.smallLabel}>Login</Text>
+          <Text style={styles.smallLabel}>/</Text>
+          <Text onPress={() => Actions.signupScreen()} style={styles.smallLabel}>Register</Text>
+        </Item>
+      </View>
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.headerContainer}>
-          <Text style={labelStyles.blackMediumLabel}>Vinay Singh</Text>
-          <Text style={labelStyles.blackSmallLabel}>vinaysinghsatna01@gmail.com</Text>
+          <Text style={styles.smallLabel}>{`You're logged in as`}</Text>
+          <Text style={styles.largeLabel}>Vinay Singh</Text>
+          <Text style={styles.largeLabel}>vinaysinghsatna01@gmail.com</Text>
         </View>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.bodyStyle}>

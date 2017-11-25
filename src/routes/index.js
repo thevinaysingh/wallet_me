@@ -9,6 +9,7 @@ import {
   SignupScreen,
   HomeScreen,
   AccountForm,
+  MyProfile,
 } from '../modules';
 
 const Routes = () => (
@@ -18,6 +19,7 @@ const Routes = () => (
       <Scene key={'signupScreen'} component={SignupScreen} hideNavBar />
       <Scene key={'homeScreen'} component={HomeScreen} hideNavBar initial />
       <Scene key={'accountForm'} component={AccountForm} hideNavBar />
+      <Scene key={'myProfile'} component={MyProfile} hideNavBar />
     </Scene>
   </Router>
 );
