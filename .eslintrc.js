@@ -36,5 +36,6 @@ module.exports = {
    "no-underscore-dangle": 0,
    "react/forbid-prop-types": 0,
    "jsx-quotes": 0,
+   "react/no-array-index-key": 0,
  }
 };

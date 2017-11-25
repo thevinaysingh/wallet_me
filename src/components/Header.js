@@ -34,15 +34,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   badgeIconContainer: {
-    width: 50,
+    width: 40,
     justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row',
   },
   backIcon: {
     marginHorizontal: 10,
-    width: 20,
-    height: 20,
+    width: 15,
+    height: 15,
   },
 });
 
@@ -53,16 +53,30 @@ const CustomHeader = props => (
       style={styles.iconContainer}
     >
       {props.showMenu ?
-        <Icon name="menu" color={Colors.whiteIconColor} size={25} />
+        <Icon name="menu" color={Colors.whiteIconColor} size={20} />
         : <Image style={styles.backIcon} source={Images.backWhite} />}
     </TouchableOpacity>
     <Text style={styles.headerTitleText} >{props.title}</Text>
+    {props.showFilterIcon &&
+    <TouchableOpacity
+      onPress={props.onPressFilterIcon}
+      style={styles.badgeIconContainer}
+    >
+      <Icon name="filter" color={Colors.whiteIconColor} size={15} />
+    </TouchableOpacity>}
+    {props.showRefreshIcon &&
+    <TouchableOpacity
+      onPress={props.onPressRefreshIcon}
+      style={styles.badgeIconContainer}
+    >
+      <Icon name="refresh-ccw" color={Colors.whiteIconColor} size={15} />
+    </TouchableOpacity>}
     {props.showPlusIcon &&
     <TouchableOpacity
       onPress={props.onPressRightIcon}
       style={styles.badgeIconContainer}
     >
-      <Icon name="plus" color={Colors.whiteIconColor} size={25} />
+      <Icon name="plus" color={Colors.whiteIconColor} size={20} />
     </TouchableOpacity>}
   </View>
 );
@@ -71,16 +85,24 @@ CustomHeader.propTypes = {
   title: PropTypes.string,
   showMenu: PropTypes.bool,
   showPlusIcon: PropTypes.bool,
+  showFilterIcon: PropTypes.bool,
+  showRefreshIcon: PropTypes.bool,
   onPressleftIcon: PropTypes.func,
   onPressRightIcon: PropTypes.func,
+  onPressFilterIcon: PropTypes.func,
+  onPressRefreshIcon: PropTypes.func,
 };
 
 CustomHeader.defaultProps = {
   title: 'Title',
   showMenu: true,
   showPlusIcon: true,
+  showFilterIcon: false,
+  showRefreshIcon: false,
   onPressleftIcon: _.noop,
   onPressRightIcon: _.noop,
+  onPressFilterIcon: _.noop,
+  onPressRefreshIcon: _.noop,
 };
 
 export default CustomHeader;

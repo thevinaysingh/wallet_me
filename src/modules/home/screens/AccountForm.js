@@ -24,8 +24,8 @@ const styles = {
   },
   iconEyeStyle: {
     color: Colors.whiteIconColor,
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     alignSelf: 'center',
     borderRadius: 5,
     textAlign: 'center',
@@ -116,7 +116,7 @@ class AccountForm extends Component {
                 marginTop: -dimensions.smallDimension,
               }}
             >
-              <Icon style={styles.iconStyle} size={20} name='globe' />
+              <Icon style={styles.iconStyle} size={20} name='grid' />
               <Input
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
