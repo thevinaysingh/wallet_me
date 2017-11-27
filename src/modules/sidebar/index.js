@@ -81,7 +81,7 @@ export default class Sidebar extends Component {
       return;
     }
     if(index === 2) {
-      //Actions.settings();
+      Actions.settings();
       return;
     }
   }
