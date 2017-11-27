@@ -1,3 +1,3 @@
 export const focusOnNext = (self, key) => {
-  self[key].focus();
+  self[key]._root.focus();
 };
