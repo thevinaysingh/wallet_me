@@ -14,6 +14,8 @@ import {
   // isAddressValid,
   // isPincodeValid,
   // isPhoneValid,
+  assignRef,
+  focusOnNext,
 } from '../../../utils';
 // import { errors } from '../../../constants';
 
@@ -122,36 +124,43 @@ class AccountForm extends Component {
                 placeholderTextColor={Colors.placeholderTxtColor}
                 placeholder={'Application name'}
                 returnKeyType={'next'}
+                onSubmitEditing={() => focusOnNext(this, 'webUrlInput')}
                 {...linkState(this, 'title')}
               />
             </Item>
             <Item style={{ marginVertical: dimensions.smallDimension }}>
               <Icon style={styles.iconStyle} size={20} name='chrome' />
               <Input
+                ref={ref => assignRef(this, 'webUrlInput', ref)}
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
                 placeholder={'Http url (optional)'}
                 returnKeyType={'next'}
+                onSubmitEditing={() => focusOnNext(this, 'userIdInput')}
                 {...linkState(this, 'webUrl')}
               />
             </Item>
             <Item style={{ marginVertical: dimensions.smallDimension }}>
               <Icon style={styles.iconStyle} size={20} name='user' />
               <Input
+                ref={ref => assignRef(this, 'userIdInput', ref)}
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
                 placeholder={'Username'}
                 returnKeyType={'next'}
+                onSubmitEditing={() => focusOnNext(this, 'passwordInput')}
                 {...linkState(this, 'userId')}
               />
             </Item>
             <Item style={{ marginVertical: dimensions.smallDimension }}>
               <Icon style={styles.iconStyle} size={20} name='lock' />
               <Input
+                ref={ref => assignRef(this, 'passwordInput', ref)}
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
                 placeholder={'Password'}
                 returnKeyType="next"
+                onSubmitEditing={() => focusOnNext(this, 'linkedEmailInput')}
                 secureTextEntry={!this.state.showPassword}
                 {...linkState(this, 'password')}
               />
@@ -173,31 +182,37 @@ class AccountForm extends Component {
             <Item style={{ marginVertical: dimensions.smallDimension }}>
               <Icon style={styles.iconStyle} size={20} name='mail' />
               <Input
+                ref={ref => assignRef(this, 'linkedEmailInput', ref)}
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
                 placeholder={'Linked email (optional)'}
                 returnKeyType="next"
+                onSubmitEditing={() => focusOnNext(this, 'linkedMobInput')}
                 {...linkState(this, 'linkedEmail')}
               />
             </Item>
             <Item style={{ marginVertical: dimensions.smallDimension }}>
               <Icon style={styles.iconStyle} size={20} name='phone' />
               <Input
+                ref={ref => assignRef(this, 'linkedMobInput', ref)}
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
                 placeholder={'Linked phone (optional)'}
                 keyboardType={'phone-pad'}
                 returnKeyType="next"
+                onSubmitEditing={() => focusOnNext(this, 'objectiveInput')}
                 {...linkState(this, 'linkedMob')}
               />
             </Item>
             <Item style={{ marginVertical: dimensions.smallDimension }}>
               <Icon style={styles.iconStyle} size={20} name='clipboard' />
               <Input
+                ref={ref => assignRef(this, 'objectiveInput', ref)}
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
                 placeholder={'Comments (optional)'}
                 returnKeyType="done"
+                onSubmitEditing={() => this.handleSubmit()}
                 {...linkState(this, 'objective')}
               />
             </Item>

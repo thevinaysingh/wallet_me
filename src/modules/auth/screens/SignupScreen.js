@@ -10,7 +10,7 @@ import { Container, Content, Card, Item, Input, Icon, Button } from 'native-base
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Colors, dimensions, labelStyles, containerStyles } from '../../../themes';
-import { Header, Footer, StatusBar } from '../../../components';
+import { Header, StatusBar } from '../../../components';
 import {
   linkState,
   isEmailValid,
@@ -19,6 +19,7 @@ import {
   isAddressValid,
   isPincodeValid,
   isPhoneValid,
+  focusOnNext,
 } from '../../../utils';
 import { errors } from '../../../constants';
 
@@ -49,27 +50,7 @@ class Signup extends Component {
       email: '',
       mob: '',
       password: '',
-      isKeyboardOpen: false,
     };
-  }
-
-  componentWillMount() {
-    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
-    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
-  }
-
-  componentWillUnmount() {
-    this.keyboardDidShowListener.remove();
-    this.keyboardDidHideListener.remove();
-    Keyboard.dismiss();
-  }
-
-  keyboardDidShow = () => {
-    this.setState({ isKeyboardOpen: true });
-  }
-
-  keyboardDidHide = () => {
-    this.setState({ isKeyboardOpen: false });
   }
 
   handleSubmit = () => {
@@ -102,18 +83,12 @@ class Signup extends Component {
     Actions.pop();
   }
 
-  focusInput(inputField) {
-    this[inputField]._root.focus();
+  isButtonDisabled = () => {
+    return true;
   }
 
   render() {
-    const {
-      isKeyboardOpen,
-      displayName,
-      email,
-      mob,
-      password,
-    } = this.state;
+    // const buttonDisabledStatus = this.isButtonDisabled();
     return (
       <Container style={containerStyles.defaultContainer}>
         <StatusBar />
@@ -137,8 +112,7 @@ class Signup extends Component {
                 placeholderTextColor={Colors.placeholderTxtColor}
                 placeholder={'First & last name'}
                 returnKeyType={'next'}
-                getRef={(ref) => { this.nameInput = ref; }}
-                onSubmitEditing={() => this.focusInput('emailInput')}
+                onSubmitEditing={() => focusOnNext(this, 'emailInput')}
                 {...linkState(this, 'displayName')}
               />
             </Item>
@@ -150,8 +124,8 @@ class Signup extends Component {
                 placeholder={'Email'}
                 keyboardType={'email-address'}
                 returnKeyType={'next'}
-                getRef={(ref) => { this.emailInput = ref; }}
-                onSubmitEditing={() => this.focusInput('mobileInput')}
+                ref={(ref) => { this.emailInput = ref; }}
+                onSubmitEditing={() => focusOnNext(this, 'mobileInput')}
                 {...linkState(this, 'email')}
               />
             </Item>
@@ -160,11 +134,12 @@ class Signup extends Component {
               <Input
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
-                placeholder={'Mobile'}
+                placeholder={'Mobile (10 digits)'}
                 keyboardType={'phone-pad'}
                 returnKeyType={'next'}
-                getRef={(ref) => { this.mobileInput = ref; }}
-                onSubmitEditing={() => this.focusInput('passwordInput')}
+                maxLength={10}
+                ref={(ref) => { this.mobileInput = ref; }}
+                onSubmitEditing={() => focusOnNext(this, 'passwordInput')}
                 {...linkState(this, 'mob')}
               />
             </Item>
@@ -173,16 +148,16 @@ class Signup extends Component {
               <Input
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
-                placeholder={'Password'}
-                getRef={(ref) => { this.passwordInput = ref; }}
-                returnKeyType="next"
+                placeholder={'Password (Min. 6 chars)'}
+                ref={(ref) => { this.passwordInput = ref; }}
+                returnKeyType="done"
                 secureTextEntry
-                onSubmitEditing={() => this.focusInput('addressInput')}
+                onSubmitEditing={this.handleSubmit}
                 {...linkState(this, 'password')}
               />
             </Item>
             <Button
-              onPress={() => this.handleSubmit()}
+              onPress={this.handleSubmit}
               full
               style={{ backgroundColor: Colors.primaryBgColor, marginVertical: 15 }}
             >
@@ -192,7 +167,10 @@ class Signup extends Component {
           <View style={containerStyles.rowCenteredContainer}>
             <Text style={labelStyles.blackLargeLabel}> {"Already have an account?"} </Text>
             <TouchableOpacity onPress={() => Actions.pop()}>
-              <Text style={labelStyles.linkLabelStyle}>Login</Text>
+              <Text
+                style={[labelStyles.linkLabelStyle, { color: Colors.themeIconColor }]}
+              >Login
+              </Text>
             </TouchableOpacity>
           </View>
         </Content>        

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/Feather';
-import { Item } from 'native-base';
+import { Item, Thumbnail } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import {
   StyleSheet,
@@ -22,9 +22,9 @@ const styles = StyleSheet.create({
     height: dimensions.getViewportHeight(),
   },
   headerContainer: {
-    minHeight: 100,
+    minHeight: 160,
     backgroundColor: Colors.defaultBgColor,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     padding: 10,
     alignItems: 'flex-start',
   },
@@ -103,6 +103,7 @@ export default class Sidebar extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.headerContainer}>
+          <Thumbnail large source={{ uri: 'http://bionicinterface.com/web/googida/art4ever/a0128/a03.png' }} />
           <Text style={styles.smallLabel}>{`You're logged in as`}</Text>
           <Text style={styles.largeLabel}>Vinay Singh</Text>
           <Text style={styles.largeLabel}>vinaysinghsatna01@gmail.com</Text>

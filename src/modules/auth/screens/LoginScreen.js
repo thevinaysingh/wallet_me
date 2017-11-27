@@ -10,9 +10,8 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Colors, dimensions, containerStyles, labelStyles } from '../../../themes';
 import { AppLogo, StatusBar } from '../../../components';
-import { linkState, isEmailValid, isPasswordValid } from '../../../utils';
+import { linkState, isEmailValid, isPasswordValid, focusOnNext } from '../../../utils';
 import { errors } from '../../../constants';
-import withDrawer from '../../../utils/withDrawer';
 
 class Login extends Component {
   constructor() {
@@ -34,10 +33,6 @@ class Login extends Component {
     // Call Api for login
   }
 
-  focusInput(inputField) {
-    this[inputField]._root.focus();
-  }
-
   render() {
     return (
       <Container style={containerStyles.defaultContainer}>
@@ -53,23 +48,22 @@ class Login extends Component {
             >
               <Icon style={{ color: Colors.themeIconColor }} active name="mail" />
               <Input
-                getRef={(ref) => { this.emailInput = ref; }}
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
                 placeholder="Email"
                 keyboardType="email-address"
                 returnKeyType="next"
-                onSubmitEditing={() => this.focusInput('passwordInput')}
+                onSubmitEditing={() => focusOnNext(this, 'passwordInput')}
                 {...linkState(this, 'email')}
               />
             </Item>
-            <Item floatingLabel style={{ marginVertical: dimensions.smallDimension }}>
+            <Item style={{ marginVertical: dimensions.smallDimension }}>
               <Icon style={{ color: Colors.themeIconColor }} active name="lock" />
               <Input
-                getRef={(ref) => { this.passwordInput = ref; }}
+                ref={(ref) => { this.passwordInput = ref; }}
                 style={labelStyles.blackSmallLabel}
                 placeholderTextColor={Colors.placeholderTxtColor}
-                placeholder="Password"
+                placeholder="Password (Min. 6 chars)"
                 returnKeyType="done"
                 secureTextEntry={!this.state.showPassword}
                 onSubmitEditing={() => this.handleSubmit()}
@@ -99,9 +93,12 @@ class Login extends Component {
             </Button>
           </Card>
           <View style={containerStyles.rowCenteredContainer}>
-            <Text style={labelStyles.blackLargeLabel}> {"Don't have an account?"} </Text>
+            <Text style={labelStyles.blackMediumLabel}> {"Don't have an account?"} </Text>
             <TouchableOpacity onPress={() => Actions.signupScreen()}>
-              <Text style={labelStyles.linkLabelStyle}>Register</Text>
+              <Text
+                style={[labelStyles.linkLabelStyle, { color: Colors.themeIconColor }]}
+              >Register
+              </Text>
             </TouchableOpacity>
           </View>
         </Content>
@@ -114,4 +111,4 @@ const mapStateToProps = state => ({});
 
 const mapDispatchToProps = () => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(withDrawer(Login));
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
