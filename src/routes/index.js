@@ -20,9 +20,9 @@ import {
 const Routes = () => (
   <Router>
     <Scene key={'app_root'}>
-      <Scene key={'loginScreen'} component={LoginScreen} hideNavBar />
+      <Scene key={'loginScreen'} component={LoginScreen} hideNavBar initial />
       <Scene key={'signupScreen'} component={SignupScreen} hideNavBar />
-      <Scene key={'homeScreen'} component={HomeScreen} hideNavBar initial />
+      <Scene key={'homeScreen'} component={HomeScreen} hideNavBar />
       <Scene key={'accountForm'} component={AccountForm} hideNavBar />
       <Scene key={'myProfile'} component={MyProfile} hideNavBar />
       <Scene key={'settings'} component={Settings} hideNavBar />

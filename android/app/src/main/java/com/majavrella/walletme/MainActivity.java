@@ -1,4 +1,4 @@
-package com.walletme;
+package com.majavrella.walletme;
 
 import com.facebook.react.ReactActivity;
 

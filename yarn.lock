@@ -84,6 +84,10 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
+andlog@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/andlog/-/andlog-1.0.0.tgz#25b39047ac9c1e5f6b2c8e4cdb5e7bf9e65e534b"
+
 ansi-escapes@^1.1.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-1.4.0.tgz#d3a8a83b319aa67793662b13e761c7911422306e"
@@ -941,6 +945,12 @@ boom@5.x.x:
   resolved "https://registry.yarnpkg.com/boom/-/boom-5.2.0.tgz#5dd9da6ee3a5f302077436290cb717d3f4a54e02"
   dependencies:
     hoek "4.x.x"
+
+bows@^1.6.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/bows/-/bows-1.7.0.tgz#a3598ed9cef61a7a0cab1a7240f291654865ec76"
+  dependencies:
+    andlog "^1.0.0"
 
 bplist-creator@0.0.7:
   version "0.0.7"
@@ -3965,6 +3975,14 @@ react-native-easy-grid@0.1.15:
 react-native-extra-dimensions-android@^0.21.0:
   version "0.21.0"
   resolved "https://registry.yarnpkg.com/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-0.21.0.tgz#2992384a90df738cf678a452cadbf251052ce7bc"
+
+react-native-firebase@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-3.1.1.tgz#82d8fdb0abe1a9140101b75fb8b6a5094ea2e99d"
+  dependencies:
+    bows "^1.6.0"
+    opencollective "^1.0.3"
+    prop-types "^15.6.0"
 
 "react-native-keyboard-aware-scroll-view@https://github.com/GeekyAnts/react-native-keyboard-aware-scroll-view":
   version "0.2.9"

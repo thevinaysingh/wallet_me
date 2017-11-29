@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "72234956826",
+    "firebase_url": "https://digital-account-wallet.firebaseio.com",
+    "project_id": "digital-account-wallet",
+    "storage_bucket": "digital-account-wallet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:72234956826:android:f581214203b08422",
+        "android_client_info": {
+          "package_name": "com.majavrella.walletme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "72234956826-trbrsthqvr0prh6eet1g8svia0nccj1i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.majavrella.walletme",
+            "certificate_hash": "1f862bbf36a21a3ecb3c8f4c7fcac6c8ad1e67f6"
+          }
+        },
+        {
+          "client_id": "72234956826-ghctt34vpphl124af0vpjibj4j587ucs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7LePzoDSPUu900cNXrXeR6VVcPdZVGC4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "72234956826-ghctt34vpphl124af0vpjibj4j587ucs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
