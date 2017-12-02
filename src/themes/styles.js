@@ -12,6 +12,12 @@ export const containerStyles = {
     backgroundColor: Colors.defaultBgColor,
     flex: 1,
   },
+  activityIndicator: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 80,
+  },
 };
 
 export const labelStyles = {

@@ -10,10 +10,12 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
+  ToastAndroid,
 } from 'react-native';
 import { default as MenuIconButton } from './components/MenuIconButton';
 import { labelStyles, Colors, dimensions } from '../../themes';
 import { sidebarMenus } from '../../constants';
+import { LoginManager } from '../../firebase/index';
 
 const styles = StyleSheet.create({
   container: {
@@ -56,7 +58,13 @@ export default class Sidebar extends Component {
 
   handleSubmit = (key, index) => {
     if(index === 3) {
-      // logout
+      LoginManager.logout()
+      .then(() => {
+        ToastAndroid.show('Successfully logged out!', ToastAndroid.SHORT);
+        Actions.loginScreen({ type: 'reset' });
+      }).catch((error) => {
+        Alert.alert('Error', `${error}`);
+      });
       this.props.toggleDrawer();
       return;
     }    

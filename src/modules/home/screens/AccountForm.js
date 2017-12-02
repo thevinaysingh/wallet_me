@@ -1,4 +1,9 @@
 import React, { Component } from 'react';
+import {
+  Alert,
+  ActivityIndicator,
+  ToastAndroid,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/Feather';
 import { Container, Content, Card, Item, Input, Button, Text } from 'native-base';
@@ -8,16 +13,14 @@ import { Colors, dimensions, labelStyles, containerStyles } from '../../../theme
 import { Header, StatusBar } from '../../../components';
 import {
   linkState,
-  // isEmailValid,
-  // isPasswordValid,
-  // isDisplayNameValid,
-  // isAddressValid,
-  // isPincodeValid,
-  // isPhoneValid,
+  isEmailValid,
+  isAddressValid,
+  isPhoneValid,
   assignRef,
   focusOnNext,
+  networkConnectivity,
 } from '../../../utils';
-// import { errors } from '../../../constants';
+import { FirebaseManager } from '../../../firebase/index';
 
 const styles = {
   iconStyle: {
@@ -49,58 +52,83 @@ class AccountForm extends Component {
       linkedEmail: account.linked_email,
       objective: account.objective,
       showPassword: false,
+      isLoading: false,
     };
-    // this.itemsRef = firebase.database().ref().child('users').child('-Kn__pTjpsBCH01i-nlN').child('digital_accounts');
-  }
-
-  componentWillMount() {
-    // NetInfo.isConnected.fetch().then((isConnected) => {
-    //   isConnected ? this.setState({ netStatus: true }) : this.setState({ netStatus: false });
-    // });
-  }
-
-  applyValidation() {
-    let isAllfieldsValid = true;
-    this.state.title === '' || this.state.webUrl === '' || this.state.userId === '' ||
-    this.state.password === '' || this.state.linkedMob === '' || this.state.linkedEmail === '' ||
-    this.state.objective === '' || this.state.type === '' ? isAllfieldsValid = false : null;
-    return isAllfieldsValid;
   }
 
   handleSubmit() {
-    const isAllFieldsValid = this.applyValidation();
-    if (isAllFieldsValid) {
-      const digitalAccount = {
-        app_name: this.state.title,
-        web_url: this.state.webUrl,
-        username: this.state.userId,
-        password: this.state.password,
-        linked_email: this.state.linkedEmail,
-        linked_mob: this.state.linkedMob,
-        objective: this.state.objective,
-        type: 'Others',
-        date: new Date().toDateString(),
-      };
-
-    //   this.itemsRef.push(digitalAccount)
-    //   .then(() => {
-    //     Alert.alert('Successfully added to wallet');
-    //     this.setState({
-    //       title: '',
-    //       webUrl: '',
-    //       userId: '',
-    //       password: '',
-    //       linkedMob: '',
-    //       linkedEmail: '',
-    //       objective: '',
-    //     });
-    //   });
-    // } else {
-    //   Alert.alert('Input error or no network');
+    const {
+      title,
+      webUrl,
+      userId,
+      password,
+      linkedMob,
+      linkedEmail,
+      objective,
+    } = this.state;
+    if (linkedEmail.length > 0 || linkedMob.length > 0) {
+      if (!isEmailValid(linkedEmail)) {
+        Alert.alert('Input Error', 'Linked email is not valid');
+        return;
+      }
+      Alert.alert('Input Error', 'Linked phone is not valid');
+      return;
     }
+    const digitalAccount = {
+      app_name: title,
+      web_url: webUrl,
+      username: userId,
+      password,
+      linked_email: linkedEmail === '' ? 'unset' : linkedEmail,
+      linked_mob: linkedMob === '' ? 'unset' : linkedMob,
+      objective: objective === '' ? 'unset' : linkedMob,
+      type: 'Others',
+      date: new Date().getDate().toString(),
+    };
+    networkConnectivity().then(() => {
+      if (this.props.create) {
+        this.setState({ isLoading: true });
+        FirebaseManager.addAccount(digitalAccount)
+          .then(() => {
+            this.setState({ isLoading: false });
+            ToastAndroid.show('Successfully added!', ToastAndroid.LONG);
+            Actions.homeScreen({ type: 'reset' });
+          }).catch((error) => {
+            this.setState({ isLoading: false });
+            Alert.alert('Error', `${error}`);
+          });
+      } else {
+        FirebaseManager.updateAccount(digitalAccount, this.props.account.key)
+        .then(() => {
+          this.setState({ isLoading: false });
+          ToastAndroid.show('Successfully updated!', ToastAndroid.LONG);
+          Actions.homeScreen({ type: 'reset' });
+        }).catch((error) => {
+          this.setState({ isLoading: false });
+          Alert.alert('Error', `${error}`);
+        });
+      }
+    }).catch((error) => {
+      Alert.alert('Network Error', `${error}`);
+    });
+  }
+
+  isSubmitDisabled = () => {
+    const {
+      title,
+      webUrl,
+      userId,
+      password,
+    } = this.state;
+    if (!isAddressValid(title) || !isAddressValid(webUrl)
+      || !isAddressValid(userId) || !isAddressValid(password)) {
+      return true;
+    }
+    return false;
   }
 
   render() {
+    const isSubmitDisabled = this.isSubmitDisabled();
     return (
       <Container style={containerStyles.defaultContainer}>
         <StatusBar />
@@ -216,13 +244,25 @@ class AccountForm extends Component {
                 {...linkState(this, 'objective')}
               />
             </Item>
-            <Button
-              onPress={() => this.handleSubmit()}
-              full
-              style={{ backgroundColor: Colors.primaryBgColor, marginVertical: 15 }}
-            >
-              <Text style={labelStyles.primaryButtonLabel}>{this.props.create ? 'Add' : 'Edit'}</Text>
-            </Button>
+            {this.state.isLoading ?
+              <ActivityIndicator
+                animating={Boolean(true)}
+                color={'#bc2b78'}
+                size={'large'}
+                style={containerStyles.activityIndicator}
+              /> :
+              <Button
+                onPress={() => this.handleSubmit()}
+                full
+                disabled={isSubmitDisabled}
+                style={{
+                  backgroundColor: isSubmitDisabled ?
+                    Colors.placeholderTxtColor : Colors.primaryBgColor,
+                  marginVertical: 15,
+                }}
+              >
+                <Text style={labelStyles.primaryButtonLabel}>{this.props.create ? 'Add' : 'Edit'}</Text>
+              </Button>}
           </Card>
         </Content>
       </Container>

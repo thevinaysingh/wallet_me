@@ -4,10 +4,12 @@ import {
   Text,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { Container, Content, Card, Item, Input, CardItem, Icon, Button, CheckBox } from 'native-base';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+import { LoginManager, FirebaseManager } from '../../../firebase';
 import { Colors, dimensions, containerStyles, labelStyles } from '../../../themes';
 import { AppLogo, StatusBar } from '../../../components';
 import { linkState, isEmailValid, isPasswordValid, focusOnNext } from '../../../utils';
@@ -20,17 +22,38 @@ class Login extends Component {
       email: '',
       password: '',
       showPassword: false,
+      isLoading: false,
     };
+    this.isUserLoggedIn();
+  }
+
+  isUserLoggedIn() {
+    FirebaseManager.getAuthRef().onAuthStateChanged((user) => {
+      if (user) {
+        FirebaseManager.uid = user.uid;
+        Actions.homeScreen({ type: 'reset' });
+      }
+    });
   }
 
   handleSubmit() {
     const { email, password } = this.state;
     if (!isEmailValid(email)) {
       Alert.alert(errors.emailErrorText);
+      return;
     } else if (!isPasswordValid(password)) {
       Alert.alert(errors.passwordErrorText);
+      return;
     }
-    // Call Api for login
+    this.setState({ isLoading: true });
+    LoginManager.loginRequest(email, password)
+      .then(() => {
+        this.setState({ isLoading: false });
+        Actions.homeScreen();
+      }).catch((error) => {
+        this.setState({ isLoading: false });
+        Alert.alert('Login Error', `${error}`);
+      });
   }
 
   render() {
@@ -84,13 +107,20 @@ class Login extends Component {
               style={[labelStyles.linkLabelStyle, { marginTop: -dimensions.smallDimension, textAlign: 'right' }]}
             >Forgot password
             </Text>
-            <Button
-              onPress={() => this.handleSubmit()}
-              full
-              style={{ backgroundColor: Colors.primaryBgColor, marginVertical: 15 }}
-            >
-              <Text style={labelStyles.primaryButtonLabel}>LOGIN</Text>
-            </Button>
+            {this.state.isLoading ?
+              <ActivityIndicator
+                animating={Boolean(true)}
+                color={'#bc2b78'}
+                size={'large'}
+                style={containerStyles.activityIndicator}
+              /> :
+              <Button
+                onPress={() => this.handleSubmit()}
+                full
+                style={{ backgroundColor: Colors.primaryBgColor, marginVertical: 15 }}
+              >
+                <Text style={labelStyles.primaryButtonLabel}>LOGIN</Text>
+              </Button>}
           </Card>
           <View style={containerStyles.rowCenteredContainer}>
             <Text style={labelStyles.blackMediumLabel}> {"Don't have an account?"} </Text>

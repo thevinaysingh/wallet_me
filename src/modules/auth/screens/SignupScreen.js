@@ -5,10 +5,13 @@ import {
   TouchableOpacity,
   Alert,
   Keyboard,
+  ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 import { Container, Content, Card, Item, Input, Icon, Button } from 'native-base';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+import { LoginManager } from '../../../firebase';
 import { Colors, dimensions, labelStyles, containerStyles } from '../../../themes';
 import { Header, StatusBar } from '../../../components';
 import {
@@ -16,8 +19,6 @@ import {
   isEmailValid,
   isPasswordValid,
   isDisplayNameValid,
-  isAddressValid,
-  isPincodeValid,
   isPhoneValid,
   focusOnNext,
 } from '../../../utils';
@@ -39,6 +40,15 @@ const styles = {
   iconStyle: {
     color: Colors.themeIconColor,
   },
+  iconEyeStyle: {
+    color: Colors.primaryBgColor,
+    width: 30,
+    height: 30,
+    alignSelf: 'center',
+    borderRadius: 5,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+  },
 };
 
 class Signup extends Component {
@@ -50,12 +60,18 @@ class Signup extends Component {
       email: '',
       mob: '',
       password: '',
+      isLoading: false,
+      showPassword: false,
     };
   }
 
   handleSubmit = () => {
-    Keyboard.dismiss();
-    const { email, mob, password, address, landmark, pincode, displayName } = this.state;
+    const {
+      email,
+      mob,
+      password,
+      displayName,
+    } = this.state;
     if (!isDisplayNameValid(displayName)) {
       Alert.alert(errors.nameErrorText);
       return;
@@ -68,14 +84,21 @@ class Signup extends Component {
     } else if (!isPasswordValid(password)) {
       Alert.alert(errors.passwordErrorText);
       return;
-    } else if (!isAddressValid(address)) {
-      Alert.alert(errors.addressErrorText);
-      return;
-    } else if (!isPincodeValid(pincode)) {
-      Alert.alert(errors.pincodeErrorText);
-      return;
     }
-    // Call Api for Register
+    this.setState({ isLoading: true });
+    LoginManager.signUpRequest(displayName, email, mob, password)
+    .then((response) => {
+      this.setState({ 
+        isLoading: false,
+      });
+      ToastAndroid.show('Successfully registered!', ToastAndroid.LONG);
+      Actions.pop();
+    }).catch((error) => {
+      this.setState({ 
+        isLoading: false,
+      });
+      Alert.alert('Registration Error', `${error}`);
+    });
   }
 
   handleBack = () => {
@@ -83,12 +106,7 @@ class Signup extends Component {
     Actions.pop();
   }
 
-  isButtonDisabled = () => {
-    return true;
-  }
-
   render() {
-    // const buttonDisabledStatus = this.isButtonDisabled();
     return (
       <Container style={containerStyles.defaultContainer}>
         <StatusBar />
@@ -151,18 +169,39 @@ class Signup extends Component {
                 placeholder={'Password (Min. 6 chars)'}
                 ref={(ref) => { this.passwordInput = ref; }}
                 returnKeyType="done"
-                secureTextEntry
+                secureTextEntry={!this.state.showPassword}
                 onSubmitEditing={this.handleSubmit}
                 {...linkState(this, 'password')}
               />
+              {this.state.showPassword ?
+                <Icon
+                  onPress={() => this.setState({ showPassword: false })}
+                  style={styles.iconEyeStyle}
+                  size={20}
+                  name="eye"
+                /> :
+                <Icon
+                  onPress={() => this.setState({ showPassword: true })}
+                  style={styles.iconEyeStyle}
+                  size={20}
+                  name='eye-off'
+                />
+              }
             </Item>
+            {this.state.isLoading ?
+            <ActivityIndicator
+              animating={Boolean(true)}
+              color={'#bc2b78'}
+              size={'large'}
+              style={containerStyles.activityIndicator}
+            /> :
             <Button
               onPress={this.handleSubmit}
               full
               style={{ backgroundColor: Colors.primaryBgColor, marginVertical: 15 }}
             >
               <Text style={labelStyles.primaryButtonLabel}>REGISTER</Text>
-            </Button>
+            </Button>}
           </Card>
           <View style={containerStyles.rowCenteredContainer}>
             <Text style={labelStyles.blackLargeLabel}> {"Already have an account?"} </Text>

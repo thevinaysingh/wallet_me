@@ -57,7 +57,7 @@ export const isPincodeValid = (pincode) => {
  * @returns {boolean}
  */
 export const isPhoneValid = (mobile) => {
-  const mobilePattern = /^[1-9][0-9]{10}$/;
+  const mobilePattern = /^([1-9]{1})?([0-9]{9})$/;
   if (mobilePattern.test(mobile)) {
     return true;
   }

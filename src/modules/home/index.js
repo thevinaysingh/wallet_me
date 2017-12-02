@@ -7,6 +7,10 @@ import {
   RefreshControl,
   TouchableOpacity,
   Text,
+  ActivityIndicator,
+  Alert,
+  NetInfo,
+  ToastAndroid,
 } from 'react-native';
 import { Container, Item, Input } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -19,6 +23,8 @@ import { Header, StatusBar } from '../../components';
 import { AccountListItem, CustomDialog } from './components';
 import { local } from '../../constants';
 import withDrawer from '../../utils/withDrawer';
+import { networkConnectivity } from '../../utils';
+import { FirebaseManager } from '../../firebase/index';
 
 const styles = StyleSheet.create({
   listHeader: {
@@ -80,18 +86,27 @@ class Home extends Component {
     super();
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      dataSource: ds.cloneWithRows(local.localAccountsList),
+      dataSource: ds.cloneWithRows([]),
       filter: local.getFilterList()[0],
       showFilter: false,
       refreshing: false,
       searchingItems: [],
+      accounts: [],
       searchedText: 'Search',
       isSearching: false,
+      isLoading: false,
     };
   }
 
   componentWillMount() {
+    NetInfo.isConnected.fetch().then((isConnected) => {
+      isConnected ? this.setState({ netStatus: true }) : this.setState({ netStatus: false });
+    });
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+  }
+
+  componentDidMount() {
+    this.loadAccounts();
   }
 
   componentWillUnmount() {
@@ -99,10 +114,41 @@ class Home extends Component {
     Keyboard.dismiss();
   }
 
+  componentWillReceiveProps(newProps) {
+    console.log('newProps ==', newProps)
+  }
+
+  loadAccounts = () => {
+    this.setState({ isLoading: true });
+    networkConnectivity().then(() => {
+      FirebaseManager.loadAccounts()
+      .then((accounts) => {
+        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        this.setState({
+          isLoading: false,
+          refreshing: false,
+          accounts: accounts,
+          dataSource: ds.cloneWithRows(accounts),
+        });
+      }).catch((error) => {
+        this.setState({ isLoading: false, refreshing: false });
+        Alert.alert('Load account error', `${error}`);
+      });
+    }).catch((error) => {
+      const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+      this.setState({
+        isLoading: false,
+        refreshing: false,
+        accounts: FirebaseManager.accounts,
+        dataSource: ds.cloneWithRows(FirebaseManager.accounts),
+      });
+      Alert.alert('Network Error', `${error}`);
+    });
+  }
+
   keyboardDidHide = () => {
     this.setState({ 
       isSearching: false,
-
     });
   }
 
@@ -110,26 +156,40 @@ class Home extends Component {
     // TODO:
     if (eventName !== 'itemSelected') return
     if (index === 0) {
+      // Redirect to account form to edit the account.
       Actions.accountForm({ create: false, account: account});
-    } else {
-      //this.handleRemove()
+    } else if(index === 1) {
+      Alert.alert('Delete Account', 'Are you sure you want to delete the account',[
+        {
+          text: 'NO',
+          style: 'cancel',
+        },{
+          text: `I'M Sure`,
+          onPress: () => this.handleDeleteAccount(account),
+        }
+      ]);
     }
   }
 
-  handleRefresh = () => {
-    // TODO:
-    // this.setState({refreshing: true});
-    // fetchData().then(() => {
-    //   this.setState({refreshing: false});
-    // });
+  handleDeleteAccount = (account) => {
+    // Delete the account.
+    FirebaseManager.deleteAccount(account)
+    .then(() => {
+      ToastAndroid.show('Successfully deleted!', ToastAndroid.LONG);
+      this.loadAccounts();
+    }).catch((error) => {
+      Alert.alert('Error', `${error}`);
+    });
   }
 
-  handleRemove() {
-    // TODO:
+  handleRefresh = () => {
+    TODO:
+    this.setState({refreshing: true});
+    this.loadAccounts();
   }
 
   handleSearch(text) {
-    const data = local.localAccountsList.filter(account =>
+    const data = this.state.accounts.filter(account =>
       account[this.state.filter.key].toLowerCase().startsWith(text.toLowerCase()));
 
     this.setState({
@@ -139,11 +199,11 @@ class Home extends Component {
   }
 
   handleSearchSelection(searchText) {
-    const data = local.localAccountsList.filter(account =>
+    const data = this.state.accounts.filter(account =>
       account[this.state.filter.key].toLowerCase().startsWith(searchText.toLowerCase()));
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.setState({
-      dataSource: searchText ? ds.cloneWithRows(data) : ds.cloneWithRows(local.localAccountsList),
+      dataSource: searchText ? ds.cloneWithRows(data) : ds.cloneWithRows(this.state.accounts),
       searchingItems: [],
       searchedText: searchText,
       isSearching: false,
@@ -165,7 +225,7 @@ class Home extends Component {
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.setState({
       searchedText: 'Search',
-      dataSource: ds.cloneWithRows(local.localAccountsList),
+      dataSource: ds.cloneWithRows(this.state.accounts),
     })
   }
 
@@ -238,23 +298,31 @@ class Home extends Component {
                 <Icon style={styles.filterIconStyle} size={14} name="close" />
               </TouchableOpacity>
             </TouchableOpacity>
-            <ListView
-              style={{ marginVertical: 5 }}
-              dataSource={this.state.dataSource}
-              renderRow={account => (
-                <AccountListItem
-                  key={`${account.app_name}`}
-                  onPressItem={acc => this.handleAccountSelection(acc)}
-                  onPopupEvent={this.onPopupEvent}
-                  account={account}
-                />)}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={this.handleRefresh}
-                />
-              }
-            />
+            {this.state.isLoading ?
+              <ActivityIndicator
+                animating={Boolean(true)}
+                color={'#bc2b78'}
+                size={'large'}
+                style={containerStyles.activityIndicator}
+              /> :
+              <ListView
+                style={{ marginVertical: 5 }}
+                enableEmptySections
+                dataSource={this.state.dataSource}
+                renderRow={account => (
+                  <AccountListItem
+                    key={`${account.app_name}`}
+                    onPressItem={acc => this.handleAccountSelection(acc)}
+                    onPopupEvent={this.onPopupEvent}
+                    account={account}
+                  />)}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={this.handleRefresh}
+                  />
+                }
+              />}
             {showFilter && this.renderFilterContainer()}
           </View>
           }

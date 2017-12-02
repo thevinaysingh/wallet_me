@@ -9,3 +9,4 @@ export {
   isPincodeValid,
   isPhoneValid,
 } from './validation';
+export { networkConnectivity } from './NetworkConnectivity';
