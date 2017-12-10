@@ -6,10 +6,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import _ from 'lodash';
+import { Colors } from '../themes';
 
 const styles = StyleSheet.create({
   iconStyle: {
-    color: '#004E88',
+    color: Colors.themeIconColor,
     marginRight: 5,
   },
   blackSmallLabel: {
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     textAlign: 'center',
     textAlignVertical: 'center',
-    backgroundColor: '#004E88',
+    backgroundColor: Colors.themeIconColor,
   },
 });
 

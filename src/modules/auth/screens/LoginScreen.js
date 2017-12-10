@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  StyleSheet,
 } from 'react-native';
 import { Container, Content, Card, Item, Input, CardItem, Icon, Button, CheckBox } from 'native-base';
 import { connect } from 'react-redux';
@@ -12,8 +13,45 @@ import { Actions } from 'react-native-router-flux';
 import { LoginManager, FirebaseManager } from '../../../firebase';
 import { Colors, dimensions, containerStyles, labelStyles } from '../../../themes';
 import { AppLogo, StatusBar } from '../../../components';
-import { linkState, isEmailValid, isPasswordValid, focusOnNext } from '../../../utils';
+import { linkState, isEmailValid, isPasswordValid, focusOnNext, networkConnectivity } from '../../../utils';
 import { errors } from '../../../constants';
+
+const styles = StyleSheet.create({
+  popContainer: {
+    backgroundColor: Colors.defaultGreyColor,
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    opacity: 0.95,
+  },
+  popupOuterContainer: {
+    width: dimensions.getViewportWidth(),
+    height: 250,
+    justifyContent: 'center',
+  },
+  closePopupButton: {
+    alignSelf: 'flex-end',
+    backgroundColor: Colors.defaultBgColor,
+    borderRadius: 22,
+    marginBottom: -20,
+    marginRight: 15,
+    zIndex: 10,
+  },
+  popupInnerContainer: {
+    width: 300,
+    padding: 10,
+    minHeight: 200,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: Colors.primaryBgColor,
+    borderRadius: 5,
+  },
+});
 
 class Login extends Component {
   constructor() {
@@ -23,6 +61,8 @@ class Login extends Component {
       password: '',
       showPassword: false,
       isLoading: false,
+      showResetPassword: false,
+      resetEmail: '',
     };
     this.isUserLoggedIn();
   }
@@ -54,6 +94,86 @@ class Login extends Component {
         this.setState({ isLoading: false });
         Alert.alert('Login Error', `${error}`);
       });
+  }
+
+  handleResetPassword() {
+    const { resetEmail } = this.state;
+    if (!isEmailValid(resetEmail)) {
+      Alert.alert(errors.emailErrorText);
+      return;
+    }
+    this.setState({ isLoading: true });
+    networkConnectivity().then(() => {
+      LoginManager.resetPassword(resetEmail)
+        .then((response) => {
+          this.setState({
+            email: '',
+            password: '',
+            isLoading: false,
+            showResetPassword: false,
+            resetEmail: '',
+            showPassword: false,
+          });
+          Alert.alert('Forgot Password', `${response} Please check your email.`);
+        }).catch((error) => {
+          this.setState({ isLoading: false });
+          Alert.alert('Forgot Password Error', `${error}`);
+        });
+    }).catch((error) => {
+      this.setState({
+        email: '',
+        password: '',
+        isLoading: false,
+        showResetPassword: false,
+        resetEmail: '',
+        showPassword: false,
+      });
+      Alert.alert('Network Error', `${error}`);
+    });
+  }
+
+  renderResetPassword() {
+    return (
+      <View style={styles.popContainer}>
+        <View style={styles.popupOuterContainer}>
+          <TouchableOpacity
+            style={styles.closePopupButton}
+            onPress={() => this.setState({ showResetPassword: false })}
+          >
+            <Icon name="close" color="black" size={30} style={{ padding: 5 }} />
+          </TouchableOpacity>
+          <View style={styles.popupInnerContainer}>
+            <Text style={labelStyles.whiteXtraLargeLabel}>Enter Email</Text>
+            <Item style={{ marginVertical: dimensions.smallDimension }}>
+              <Input
+                style={labelStyles.whiteSmallLabel}
+                placeholderTextColor={Colors.placeholderTxtColor}
+                placeholder={'Email'}
+                returnKeyType="done"
+                keyboardType="email-address"
+                onSubmitEditing={() => this.handleResetPassword()}
+                {...linkState(this, 'resetEmail')}
+              />
+            </Item>
+            {this.state.isLoading ?
+              <ActivityIndicator
+                animating={Boolean(true)}
+                color={'#bc2b78'}
+                size={'large'}
+                style={containerStyles.activityIndicator}
+              /> :
+              <Button
+                onPress={() => this.handleResetPassword()}
+                full
+                transparent
+                style={{ marginVertical: 15 }}
+              >
+                <Text style={labelStyles.primaryButtonLabel}>Send Reset Password link</Text>
+              </Button>}
+          </View>
+        </View>
+      </View>
+    );
   }
 
   render() {
@@ -103,7 +223,7 @@ class Login extends Component {
               <Text style={[labelStyles.blackSmallLabel, { marginLeft: 40 }]}>Show password</Text>
             </CardItem>
             <Text
-              onPress={() => Alert.alert('forgot password')}
+              onPress={() => this.setState({ showResetPassword: true })}
               style={[labelStyles.linkLabelStyle, { marginTop: -dimensions.smallDimension, textAlign: 'right' }]}
             >Forgot password
             </Text>
@@ -132,6 +252,7 @@ class Login extends Component {
             </TouchableOpacity>
           </View>
         </Content>
+        {this.state.showResetPassword && this.renderResetPassword()}
       </Container>
     );
   }

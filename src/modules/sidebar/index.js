@@ -11,11 +11,12 @@ import {
   TouchableOpacity,
   Text,
   ToastAndroid,
+  Alert,
 } from 'react-native';
 import { default as MenuIconButton } from './components/MenuIconButton';
 import { labelStyles, Colors, dimensions } from '../../themes';
 import { sidebarMenus } from '../../constants';
-import { LoginManager } from '../../firebase/index';
+import { LoginManager, FirebaseManager } from '../../firebase/index';
 
 const styles = StyleSheet.create({
   container: {
@@ -56,29 +57,42 @@ export default class Sidebar extends Component {
     };
   }
 
+  handleLogout = () => {
+    LoginManager.logout()
+    .then(() => {
+      ToastAndroid.show('Successfully logged out!', ToastAndroid.SHORT);
+      Actions.loginScreen({ type: 'reset' });
+    }).catch((error) => {
+      Alert.alert('Error', `${error}`);
+    });
+  }
+
   handleSubmit = (key, index) => {
     if(index === 3) {
-      LoginManager.logout()
-      .then(() => {
-        ToastAndroid.show('Successfully logged out!', ToastAndroid.SHORT);
-        Actions.loginScreen({ type: 'reset' });
-      }).catch((error) => {
-        Alert.alert('Error', `${error}`);
-      });
+      Alert.alert('Logout', 'Are you sure you want to logout',[
+        {
+          text: 'NO',
+          style: 'cancel',
+        },{
+          text: `I'M Sure`,
+          onPress: () => this.handleLogout(),
+        }
+      ]);
       this.props.toggleDrawer();
       return;
-    }    
-    let menusList = this.state.menus.map((item, itemIndex) => {
-      if (itemIndex === index) {
-        item.active = true;
-      } else {
-        item.active = false;
-      }
-      return item;
-    });
-    this.setState({
-      menus: menusList,
-    });
+    }
+    // TODO: Set selected menu
+    // let menusList = this.state.menus.map((item, itemIndex) => {
+    //   if (itemIndex === index) {
+    //     item.active = true;
+    //   } else {
+    //     item.active = false;
+    //   }
+    //   return item;
+    // });
+    // this.setState({
+    //   menus: menusList,
+    // });
     
     if(index === 0) {
       Actions.homeScreen();
@@ -113,8 +127,8 @@ export default class Sidebar extends Component {
         <View style={styles.headerContainer}>
           <Thumbnail large source={{ uri: 'http://bionicinterface.com/web/googida/art4ever/a0128/a03.png' }} />
           <Text style={styles.smallLabel}>{`You're logged in as`}</Text>
-          <Text style={styles.largeLabel}>Vinay Singh</Text>
-          <Text style={styles.largeLabel}>vinaysinghsatna01@gmail.com</Text>
+          <Text style={styles.largeLabel}>{FirebaseManager.profile.name}</Text>
+          <Text style={styles.largeLabel}>{FirebaseManager.profile.email}</Text>
         </View>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.bodyStyle}>

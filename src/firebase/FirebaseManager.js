@@ -103,11 +103,28 @@ export class FirebaseManager {
     });
   };
 
-  /* TODO: */
-  static updateProfile = (profile) => {};
-
-  /* TODO: */
-  static setProfile = (profile) => {};
+  /* Update profile completed */
+  static updateProfile = (profile) => {
+    return new Promise((resolve, reject) => {
+      try {
+        FirebaseManager.getDBRef().ref('users/'+ FirebaseManager.uid + '/profile/name') 
+        .set(profile.name).then(() => {
+          FirebaseManager.getDBRef().ref('users/'+ FirebaseManager.uid + '/profile/mobile') 
+          .set(profile.mobile).then(() => {
+            FirebaseManager.profile.name = profile.name;
+            FirebaseManager.profile.mobile = profile.mobile;
+            return resolve();
+          }).catch((error) => {
+            return reject(error);
+          });
+        }).catch((error) => {
+          return reject(error);
+        });        
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
 
   /* TODO: */
   static setAvatar = (avatar) => {};

@@ -70,9 +70,10 @@ class AccountForm extends Component {
       if (!isEmailValid(linkedEmail)) {
         Alert.alert('Input Error', 'Linked email is not valid');
         return;
+      } else if(!isPhoneValid(linkedMob)) {
+        Alert.alert('Input Error', 'Linked phone is not valid');
+        return;
       }
-      Alert.alert('Input Error', 'Linked phone is not valid');
-      return;
     }
     const digitalAccount = {
       app_name: title,
@@ -215,6 +216,7 @@ class AccountForm extends Component {
                 placeholderTextColor={Colors.placeholderTxtColor}
                 placeholder={'Linked email (optional)'}
                 returnKeyType="next"
+                keyboardType="email-address"
                 onSubmitEditing={() => focusOnNext(this, 'linkedMobInput')}
                 {...linkState(this, 'linkedEmail')}
               />
@@ -228,6 +230,7 @@ class AccountForm extends Component {
                 placeholder={'Linked phone (optional)'}
                 keyboardType={'phone-pad'}
                 returnKeyType="next"
+                maxLength={10}
                 onSubmitEditing={() => focusOnNext(this, 'objectiveInput')}
                 {...linkState(this, 'linkedMob')}
               />

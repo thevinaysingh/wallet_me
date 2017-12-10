@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native';
+import {
+  Text,
+  Alert,
+  ToastAndroid,
+  ActivityIndicator,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { Container, Content, Card, Item, Input, Button } from 'native-base';
 import { connect } from 'react-redux';
@@ -12,6 +17,8 @@ import {
   isPhoneValid,
 } from '../../../utils';
 import { errors } from '../../../constants';
+import { networkConnectivity } from '../../../utils';
+import { FirebaseManager } from '../../../firebase/index';
 
 const styles = {
   keyBoardTextContainer: {
@@ -52,10 +59,11 @@ class MyProfile extends Component {
     super();
 
     this.state = {
-      displayName: 'Vinay Singh',
-      mob: '9753238059',
+      displayName: FirebaseManager.profile.name,
+      mob: FirebaseManager.profile.mobile,
       isNameEditable: false,
       isMobEditable: false,
+      isLoading: false,
     };
   }
 
@@ -69,7 +77,31 @@ class MyProfile extends Component {
       Alert.alert(errors.mobErrorText);
       return;
     }
-    // TODO: Call Api for Update profile
+    const profile= {
+      name: displayName,
+      mobile: mob,
+    };
+    this.setState({ isLoading: true });
+    networkConnectivity().then(() => {
+      FirebaseManager.updateProfile(profile)
+      .then(() => {
+        this.setState({
+          isLoading: false,
+          isNameEditable: false,
+          isMobEditable: false,
+        });
+        ToastAndroid.show('Successfully update profile!', ToastAndroid.LONG);
+        Actions.pop();
+      }).catch((error) => {
+        this.setState({ isLoading: false });
+        Alert.alert('Profile Error', `${error}`);
+      });
+    }).catch((error) => {
+      this.setState({
+        isLoading: false,
+      });
+      Alert.alert('Network Error', `${error}`);
+    });
   }
 
   handleBack = () => {
@@ -105,7 +137,7 @@ class MyProfile extends Component {
               <Icon style={styles.iconStyle} size={20} name='mail' />
               <Input
                 style={styles.editableText}
-                value={'vinaysinghsatna01@gmail.com'}
+                value={FirebaseManager.profile.email}
                 disabled
               />
             </Item>
@@ -167,18 +199,25 @@ class MyProfile extends Component {
                 />
               }
             </Item>
-            <Button
-              onPress={this.handleSubmit}
-              full
-              disabled={!isButtonDisabled}
-              style={{
-                backgroundColor: !isButtonDisabled ?
-                  Colors.placeholderTxtColor : Colors.primaryBgColor,
-                marginVertical: 15,
-              }}
-            >
-              <Text style={labelStyles.primaryButtonLabel}>UPDATE</Text>
-            </Button>
+            {this.state.isLoading ?
+              <ActivityIndicator
+                animating={Boolean(true)}
+                color={'#bc2b78'}
+                size={'large'}
+                style={containerStyles.activityIndicator}
+              /> :
+              <Button
+                onPress={this.handleSubmit}
+                full
+                disabled={!isButtonDisabled}
+                style={{
+                  backgroundColor: !isButtonDisabled ?
+                    Colors.placeholderTxtColor : Colors.primaryBgColor,
+                  marginVertical: 15,
+                }}
+              >
+                <Text style={labelStyles.primaryButtonLabel}>UPDATE</Text>
+              </Button>}
           </Card>
         </Content>
       </Container>

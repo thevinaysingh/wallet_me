@@ -60,11 +60,11 @@ const AccountListItem = props => (
       </Text>
       <Text style={styles.textStyle}>
         <Icon style={styles.iconStyle} size={21.5} name='lock' />
-        {` ${props.account.password}`}
+        {` ${props.account.password.length}`}
       </Text>
     </View>
     <PopupMenu
-      actions={['Edit', 'Remove']}
+      actions={['Edit', 'Delete']}
       onPress={(eventName, index) => props.onPopupEvent(eventName, index, props.account)}
     />
   </View>

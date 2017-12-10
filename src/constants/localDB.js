@@ -25,3 +25,14 @@ export const getFilterList = () => ([
     icon: 'lock',
   },
 ]);
+
+/* new account object */
+export const newAccountObject = {
+  app_name: '',
+  web_url: '',
+  username: '',
+  password: '',
+  linked_email: '',
+  linked_mob: '',
+  objective: '',
+};

@@ -12,7 +12,7 @@ import {
   NetInfo,
   ToastAndroid,
 } from 'react-native';
-import { Container, Item, Input } from 'native-base';
+import { Container, Item, Input, Button } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Autocomplete from 'react-native-autocomplete-input';
 import { Actions } from 'react-native-router-flux';
@@ -23,10 +23,44 @@ import { Header, StatusBar } from '../../components';
 import { AccountListItem, CustomDialog } from './components';
 import { local } from '../../constants';
 import withDrawer from '../../utils/withDrawer';
-import { networkConnectivity } from '../../utils';
+import { networkConnectivity, linkState } from '../../utils';
 import { FirebaseManager } from '../../firebase/index';
 
 const styles = StyleSheet.create({
+  popContainer: {
+    backgroundColor: Colors.defaultGreyColor,
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    opacity: 0.95,
+  },
+  popupOuterContainer: {
+    width: dimensions.getViewportWidth(),
+    height: 250,
+    justifyContent: 'center',
+  },
+  closePopupButton: {
+    alignSelf: 'flex-end',
+    backgroundColor: Colors.defaultBgColor,
+    borderRadius: 22,
+    marginBottom: -20,
+    marginRight: 15,
+    zIndex: 10,
+  },
+  popupInnerContainer: {
+    width: 300,
+    padding: 10,
+    minHeight: 200,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: Colors.primaryBgColor,
+    borderRadius: 5,
+  },
   listHeader: {
     marginTop: 5,
     padding: 10,
@@ -92,9 +126,14 @@ class Home extends Component {
       refreshing: false,
       searchingItems: [],
       accounts: [],
+      account: {},
       searchedText: 'Search',
       isSearching: false,
       isLoading: false,
+      // Unlocker state
+      showPermissionUnlocker: false,
+      password: '',
+      actionIndex: -1,
     };
   }
 
@@ -156,8 +195,11 @@ class Home extends Component {
     // TODO:
     if (eventName !== 'itemSelected') return
     if (index === 0) {
-      // Redirect to account form to edit the account.
-      Actions.accountForm({ create: false, account: account});
+      this.setState({
+        showPermissionUnlocker: true,
+        account: account,
+        actionIndex: 0,
+      });
     } else if(index === 1) {
       Alert.alert('Delete Account', 'Are you sure you want to delete the account',[
         {
@@ -165,7 +207,11 @@ class Home extends Component {
           style: 'cancel',
         },{
           text: `I'M Sure`,
-          onPress: () => this.handleDeleteAccount(account),
+          onPress: () => this.setState({
+            showPermissionUnlocker: true,
+            account: account,
+            actionIndex: 1,
+          }),
         }
       ]);
     }
@@ -239,6 +285,74 @@ class Home extends Component {
     );
   }
 
+  handlePermissionUnlocker() {
+    const { password, actionIndex, account } = this.state;
+    if (password !== FirebaseManager.profile.password) {
+      Alert.alert('User vaildation', 'You are not allowed.');
+      return;
+    }
+    if (actionIndex === 0) {
+      this.setState({ 
+        showPermissionUnlocker: false,
+        password: '',
+        actionIndex: -1,
+      });
+      // Redirect to account form to edit the account.
+      Actions.accountForm({ create: false, account: account});
+    } else if(actionIndex === 1) {
+      this.setState({ 
+        showPermissionUnlocker: false,
+        password: '',
+        actionIndex: -1,
+      });
+      this.handleDeleteAccount(account)
+    }
+  }
+
+  renderPermissionUnlocker() {
+    return (
+      <View style={styles.popContainer}>
+        <View style={styles.popupOuterContainer}>
+          <TouchableOpacity
+            style={styles.closePopupButton}
+            onPress={() => this.setState({ showPermissionUnlocker: false })}
+          >
+            <Icon name="close" color="black" size={30} style={{ padding: 5 }} />
+          </TouchableOpacity>
+          <View style={styles.popupInnerContainer}>
+            <Text style={labelStyles.whiteXtraLargeLabel}>Enter Password</Text>
+            <Item style={{ marginVertical: dimensions.smallDimension }}>
+              <Input
+                style={labelStyles.whiteSmallLabel}
+                placeholderTextColor={Colors.placeholderTxtColor}
+                placeholder={'Password'}
+                returnKeyType="done"
+                secureTextEntry
+                onSubmitEditing={() => this.handlePermissionUnlocker()}
+                {...linkState(this, 'password')}
+              />
+            </Item>
+            {this.state.isLoading ?
+              <ActivityIndicator
+                animating={Boolean(true)}
+                color={'#bc2b78'}
+                size={'large'}
+                style={containerStyles.activityIndicator}
+              /> :
+              <Button
+                onPress={() => this.handlePermissionUnlocker()}
+                full
+                transparent
+                style={{ marginVertical: 15 }}
+              >
+                <Text style={labelStyles.primaryButtonLabel}>Unlock</Text>
+              </Button>}
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   render() {
     const {
       refreshing,
@@ -247,6 +361,7 @@ class Home extends Component {
       searchingItems,
       isSearching,
       searchedText,
+      showPermissionUnlocker,
     } = this.state;
     return (
       <Container style={containerStyles.defaultContainer}>
@@ -324,6 +439,7 @@ class Home extends Component {
                 }
               />}
             {showFilter && this.renderFilterContainer()}
+            {showPermissionUnlocker && this.renderPermissionUnlocker()}
           </View>
           }
       </Container>

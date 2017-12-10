@@ -1,6 +1,6 @@
 /* Actual colors */
 /* Start */
-const themeColor = '#004E88';
+const themeColor = '#663B59';
 // const lightThemeColor = '#BA0022';
 const black = '#000000';
 const sweetBlack = '#3C4959';

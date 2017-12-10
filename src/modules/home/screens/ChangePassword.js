@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   Alert,
   TextInput,
+  ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import { Container, Content, Input, Card, Item, Icon, Button, CardItem, Right } from 'native-base';
 import { connect } from 'react-redux';
@@ -23,7 +25,8 @@ import {
   focusOnNext,
 } from '../../../utils';
 import { errors } from '../../../constants';
-// import Input from '../components/Input';
+import { networkConnectivity } from '../../../utils';
+import { LoginManager } from '../../../firebase/index';
 
 const Styles = StyleSheet.create({
   container: {
@@ -136,12 +139,33 @@ class ChangePassword extends Component {
       oldPassword: '',
       newPassword: '',
       showPassword: false,
+      isLoading: false,
     };
   }
 
   handleSubmit = () => {
     const { oldPassword, newPassword } = this.state;
-    // TODO: call api to change password.
+    this.setState({ isLoading: true });
+    networkConnectivity().then(() => {
+      LoginManager.changePassword(oldPassword, newPassword)
+      .then(() => {
+        this.setState({
+          oldPassword: '',
+          newPassword: '',
+          showPassword: false,
+        });
+        ToastAndroid.show('Successfully changed password!', ToastAndroid.LONG);
+        Actions.pop();
+      }).catch((error) => {
+        this.setState({ isLoading: false });
+        Alert.alert('Password Error', `${error}`);
+      });
+    }).catch((error) => {
+      this.setState({
+        isLoading: false,
+      });
+      Alert.alert('Network Error', `${error}`);
+    });
   }
 
   render() {
@@ -177,18 +201,25 @@ class ChangePassword extends Component {
             onSubmitEditing={this.handleSubmit}
             {...linkState(this, 'newPassword')}
           />
-          <Button
-            onPress={this.handleSubmit}
-            full
-            disabled={!isButtonDisabled}
-            style={{
-              backgroundColor: !isButtonDisabled ?
-                Colors.placeholderTxtColor : Colors.primaryBgColor,
-              marginVertical: 15,
-            }}
-          >
-            <Text style={labelStyles.primaryButtonLabel}>Submit</Text>
-          </Button>
+          {this.state.isLoading ?
+            <ActivityIndicator
+              animating={Boolean(true)}
+              color={'#bc2b78'}
+              size={'large'}
+              style={containerStyles.activityIndicator}
+            /> :
+            <Button
+              onPress={this.handleSubmit}
+              full
+              disabled={!isButtonDisabled}
+              style={{
+                backgroundColor: !isButtonDisabled ?
+                  Colors.placeholderTxtColor : Colors.primaryBgColor,
+                marginVertical: 15,
+              }}
+            >
+              <Text style={labelStyles.primaryButtonLabel}>Submit</Text>
+            </Button>}
         </Content>
       </Container>
     );
