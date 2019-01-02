@@ -3,6 +3,7 @@ import {
   Alert,
   ActivityIndicator,
   ToastAndroid,
+  Keyboard,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/Feather';
@@ -39,6 +40,8 @@ const styles = {
   },
 };
 
+const UNSET = 'unset';
+
 class AccountForm extends Component {
   constructor(props) {
     super(props);
@@ -48,9 +51,9 @@ class AccountForm extends Component {
       webUrl: account.web_url,
       userId: account.username,
       password: account.password,
-      linkedMob: account.linked_mob,
-      linkedEmail: account.linked_email,
-      objective: account.objective,
+      linkedMob: account.linked_mob === UNSET ? '' : account.linked_mob,
+      linkedEmail: account.linked_email === UNSET ? '' : account.linked_email,
+      objective: account.objective === UNSET ? '' : account.objective,
       showPassword: false,
       isLoading: false,
     };
@@ -66,23 +69,23 @@ class AccountForm extends Component {
       linkedEmail,
       objective,
     } = this.state;
-    if (linkedEmail.length > 0 || linkedMob.length > 0) {
-      if (!isEmailValid(linkedEmail)) {
+
+    if(linkedEmail.length > 0 && !isEmailValid(linkedEmail)) {
         Alert.alert('Input Error', 'Linked email is not valid');
         return;
-      } else if(!isPhoneValid(linkedMob)) {
-        Alert.alert('Input Error', 'Linked phone is not valid');
-        return;
-      }
+    }
+    if (linkedMob.length > 0 && !isPhoneValid(linkedMob)) {
+      Alert.alert('Input Error', 'Linked phone is not valid');
+      return;
     }
     const digitalAccount = {
       app_name: title,
       web_url: webUrl,
       username: userId,
       password,
-      linked_email: linkedEmail === '' ? 'unset' : linkedEmail,
-      linked_mob: linkedMob === '' ? 'unset' : linkedMob,
-      objective: objective === '' ? 'unset' : linkedMob,
+      linked_email: linkedEmail === '' ? UNSET : linkedEmail,
+      linked_mob: linkedMob === '' ? UNSET : linkedMob,
+      objective: objective === '' ? UNSET : objective,
       type: 'Others',
       date: new Date().getDate().toString(),
     };
@@ -243,7 +246,7 @@ class AccountForm extends Component {
                 placeholderTextColor={Colors.placeholderTxtColor}
                 placeholder={'Comments (optional)'}
                 returnKeyType="done"
-                onSubmitEditing={() => this.handleSubmit()}
+                onSubmitEditing={() => isSubmitDisabled ? Keyboard.dismiss() : this.handleSubmit()}
                 {...linkState(this, 'objective')}
               />
             </Item>
