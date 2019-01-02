@@ -6,6 +6,7 @@ import {
   View,
   TouchableOpacity,
   Text,
+  Keyboard,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { dimensions, Colors, labelStyles } from '../../../themes';
@@ -55,8 +56,16 @@ const styles = StyleSheet.create({
 });
 
 const CustomDialog = props => (
-  <View style={styles.popContainer}>
-    <View style={styles.popupOuterContainer}>
+  <TouchableOpacity
+    activeOpacity={1}
+    onPress={() => props.onPressClose()}
+    style={styles.popContainer}
+  >
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={() => props.onPressClose()}
+      style={styles.popupOuterContainer}
+    >
       <TouchableOpacity
         style={styles.closePopupButton}
         onPress={() => props.onPressClose()}
@@ -77,8 +86,8 @@ const CustomDialog = props => (
             </Text>
           </TouchableOpacity>))}
       </View>
-    </View>
-  </View>
+    </TouchableOpacity>
+  </TouchableOpacity>
 );
 
 CustomDialog.propTypes = {

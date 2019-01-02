@@ -18,12 +18,12 @@ export const getFilterList = () => ([
     value: 'USERNAME',
     icon: 'user-secret',
   },
-  {
-    key: 'password',
-    label: 'By password',
-    value: 'PASSWORD',
-    icon: 'lock',
-  },
+  // {
+  //   key: 'password',
+  //   label: 'By password',
+  //   value: 'PASSWORD',
+  //   icon: 'lock',
+  // },
 ]);
 
 /* new account object */
