@@ -103,10 +103,16 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0.0"
+        multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
     }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
     splits {
         abi {
             reset()
