@@ -8,7 +8,7 @@
 		"test": "jest"
 	},
 	"dependencies": {
-		"lodash": "^4.17.4",
+		"lodash": "^4.17.21",
 		"moment": "^2.19.2",
 		"native-base": "^2.3.3",
 		"react": "16.0.0",
